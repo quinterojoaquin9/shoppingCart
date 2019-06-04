@@ -23,6 +23,8 @@ Route::get('/add-to-cart/{id}', 'ProductsController@getAddToCart')->name('produc
 
 Route::get('/shopping-cart', 'ProductsController@getCart')->name('products.shoppingCart');
 
+Route::get('/add/{id}', 'ProductsController@getAddByOne')->name('products.addByOne');
+
 Route::get('/reduce/{id}', 'ProductsController@getReduceByOne')->name('products.reduceByOne');
 
 Route::get('/remove/{id}', 'ProductsController@getRemoveItem')->name('products.remove');

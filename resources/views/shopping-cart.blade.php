@@ -45,11 +45,11 @@
             <div class="spacer"></div>
             <div class="alert alert-danger">
                 <ul>
-                        <li>!! {{Session::get('error')}} !!</li>
-                    
+                    <li>!! {{Session::get('error')}} !!</li>
                 </ul>
             </div>
         @endif
+
     @if(Session::has('cart'))
         <h1 class="checkout-heading stylish-heading">Checkout</h1>
         <div class="checkout-section">
@@ -144,13 +144,25 @@
                 <div class="checkout-table">
                     @foreach ($products as $product)
                     <div class="checkout-table-row">
-                        <input id="idProducto" type="text" class="hidden" value="{{ $product['item']['id'] }}">
                         <div class="checkout-table-row-left">
                             <img src="{{ $product['item']['imagePath'] }}" alt="item" class="checkout-table-img">
                             <div class="checkout-item-details">
                                 <div class="checkout-table-item">{{ $product['item']['title'] }}</div>
                                 <div class="checkout-table-description">{{ $product['item']['description'] }}</div>
                                 <div class="checkout-table-price">$ {{ $product['item']['price'] }}</div>
+                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                  <div class="btn-group" role="group">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      Accion
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                      <a class="dropdown-item" href="{{ route('products.addByOne', ['id' => $product['item']['id']]) }}">Add by 1</a>
+                                      <a class="dropdown-item" href="{{ route('products.reduceByOne', ['id' => $product['item']['id']]) }}">Reduce by 1</a>
+                                      <a class="dropdown-item" href="{{ route('products.remove', ['id' => $product['item']['id']]) }}">Reduce All</a>
+                                    </div>
+                                  </div>
+                                </div>
+                                
                             </div>
                         </div> <!-- end checkout-table -->
 

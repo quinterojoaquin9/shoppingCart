@@ -47,6 +47,20 @@ class ProductsController extends Controller
         return redirect()->route('products.shoppingCart');
     }
 
+     public function getAddByOne($id)
+    {
+        $oldCart = Session::has('cart') ? Session::get('cart') : null;
+        $cart = new Cart($oldCart);
+        $cart->addByOne($id);
+
+        if (count($cart->items) > 0) {
+            Session::put('cart', $cart);
+        } else {
+            Session::forget('cart');
+        }
+        return redirect()->route('products.shoppingCart');
+    }
+
     public function getRemoveItem($id) {
         $oldCart = Session::has('cart') ? Session::get('cart') : null;
         $cart = new Cart($oldCart);
@@ -93,20 +107,25 @@ class ProductsController extends Controller
         }
         $oldCart = Session::get('cart');
         $cart = new Cart($oldCart);
+        //dd($cart);
 
+
+        $idsProductos = '';
         $Products = $cart->items;
-
-        foreach ($Products as $items) {
-            dd($items['item']);
-        }
-
         $idUser = Auth::User()->id;
 
-        $validateProduct = DB::table('orders')->where([
-                            ['idproducto', '=', $idProducto],
-                            ['user_id', '!=', $idUser],
+        foreach ($Products as $items) {
+            if($items['item']['id'] == 3 && $cart->totalQty >= 2){
+                $cart->totalPrice = $cart->totalPrice - $items['item']['price'];
+            }
+            $idsProductos .=  $items['item']['id']. ',';
+            $validateProduct = DB::table('orders')->where([
+                            ['idproducto', '=', $idsProductos],
+                            ['user_id', '<>', $idUser],
                         ])->get();
-        
+        }
+
+        //dd($cart);
 
         if(count($validateProduct) > 0){
             return redirect()->route('products.shoppingCart')->with('error', 'This product has already been bought by another user.');
@@ -124,7 +143,7 @@ class ProductsController extends Controller
 
             $order = new Order();
             $order->cart = serialize($cart);
-            $order->idproducto = $request->input('id');
+            $order->idproducto = $idsProductos;
             $order->address = $request->input('address');
             $order->name = $request->input('name');
             $order->payment_id = uniqid();
